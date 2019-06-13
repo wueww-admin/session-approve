@@ -28,12 +28,12 @@ class SessionRepository
 
     /**
      * @param int $sessionId
-     * @param int|null $proposalId
+     * @param string|null $proposalId
      * @return void
      * @throws ConnectionException
      * @throws DBALException
      */
-    public function approveSession(int $sessionId, ?int $proposalId): void
+    public function approveSession(int $sessionId, ?string $proposalId): void
     {
         $this->connection->beginTransaction();
 
@@ -54,7 +54,7 @@ class SessionRepository
             return;
         }
 
-        if ($proposalId !== null && $data['proposed_details']) {
+        if ($proposalId !== null && $data['proposed_details'] !== $proposalId) {
             $this->connection->commit();
             throw new ProposalConflictException();
         }

@@ -63,14 +63,8 @@ class Handler implements InvocationRequestHandlerInterface
 
         $sessionId = (int)trim($request->getUri()->getPath(), '/');
 
-        if (array_key_exists('proposal', $request->getQueryParams())) {
-            $proposalId = (int) $request->getQueryParams()['proposal'];
-        } else {
-            $proposalId = null;
-        }
-
         try {
-            $this->sessionRepository->approveSession($sessionId, $proposalId);
+            $this->sessionRepository->approveSession($sessionId, $request->getQueryParams()['proposal']);
         } catch (ProposalConflictException $ex) {
             $response->setStatusCode(409);
             return $response;
