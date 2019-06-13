@@ -1,0 +1,7 @@
+.idea
+*.iml
+
+.*.sw[opq]
+
+upload.tmp
+vendor

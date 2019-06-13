@@ -1,0 +1,30 @@
+#!/opt/bin/php
+<?php
+
+use Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\DriverManager;
+
+require __DIR__ . '/vendor/autoload.php';
+
+$config = new Configuration();
+
+$connectionParams = array(
+    'dbname' => \getenv('mysql-dbname'),
+    'user' => \getenv('mysql-user'),
+    'password' => \getenv('mysql-password'),
+    'host' => \getenv('mysql-host'),
+    'driver' => 'pdo_mysql',
+);
+
+/** @noinspection PhpUnhandledExceptionInspection */
+$conn = DriverManager::getConnection($connectionParams, $config);
+
+// work-around bug in RuntimeApiLoop
+\putenv('AWS_LAMBDA_RUNTIME_API=http://' . \getenv('AWS_LAMBDA_RUNTIME_API'));
+
+$loop = new TopicAdvisor\Lambda\RuntimeApi\RuntimeApiLoop();
+$loop
+    ->setHandlers([
+        new SessionApprove\Handler(new SessionApprove\SessionRepository($conn)),
+    ])
+    ->run();
