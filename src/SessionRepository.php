@@ -55,6 +55,7 @@ class SessionRepository
         }
 
         if ($proposalId !== null && $data['proposed_details']) {
+            $this->connection->commit();
             throw new ProposalConflictException();
         }
 
